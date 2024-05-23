@@ -2,7 +2,7 @@
 
 ### 1.サンプルアプリケーションの起動
 
-   <img src="images/sample.png" width="700px">
+   <img src="images:sample.png" width="700px">
 
    ブラウザで起動し、メロンの画像を登録した状態
 　
@@ -13,17 +13,17 @@
 
 　　'puma ver6.4.2'
 
-   <img src="images/puma.png" width="700px">
+   <img src="images:puma.png" width="700px">
 
 2. APサーバーを終了させた場合のアクセスの確認
 
-   <img src="images/puma-stop.png" width="700px">
+   <img src="images:puma-stop.png" width="700px">
 
    APサーバーを終了させた場合、アクセスできなくなる
 
 3. 再度アプリケーションを起動出来るかを確認
 
-   <img src="images/puma-reboot.png" width="700px">
+   <img src="images:puma-reboot.png" width="700px">
 
 
 ### 3.DBサーバーについて
@@ -33,13 +33,13 @@
 
    'mysqlver 8.4.0'
    
-   <img src="images/mysql-version.png" width="700px">
+   <img src="images:mysql-version.png" width="700px">
 
 
 2. DB サーバーを終了させた場合のアクセス確認
 
 
-   <img src="images/mysql-stop.png" width="700px">
+   <img src="images:mysql-stop.png" width="700px">
 
    DBサーバーを終了させた場合、アクセスできなくなる
 
