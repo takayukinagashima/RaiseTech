@@ -11,7 +11,7 @@
 
   2.EC2のインバウンドルール
  
- ローカルPCからの接続を許可と、EC2 Instance Connectを利用した接続の許可
+  自身のローカルPCからのみ接続を許可
   ![EC2インバウンドルール](task-image/lecture04/%20EC2インバウンドルール.png)
 
 ### 3.RDSについて
