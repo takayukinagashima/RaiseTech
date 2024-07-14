@@ -60,6 +60,11 @@
 
 ![lecture05_diagram_ver3](task-image/lecture05/lecture05_diagram_ver3.png)
 
+## 構築した環境の構成図の作成(修正版)
+
+![lecture05_diagram_ver4](task-image/lecture05/lecture05_diagram_ver4.png)
+
+
 ## 今回の学習の感想
 - 今回の環境構築にあたり、色々なファイルの設定内容の意味やどう関連しているのかの理解がとても難しかったです。
 - エラーや問題にあたるたびに色々なブログ記事や公式ドキュメントを参考にしましたが、そもそもの知識量が乏しく記述内容を読み解く力がもっと必要だと感じました。
