@@ -1,6 +1,6 @@
 # 第6回課題
 
-## AWSを利用した日の記録を、CloudTrailのイベントから探し出しだす
+## AWSを利用した日の記録を、CloudTrailのイベントから探し出す
 
 1. イベント名:StopDBInstance
 
