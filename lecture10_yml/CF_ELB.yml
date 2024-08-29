@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create Application Load Balancer and related resources"
+
+Parameters:
+  NameBase:
+    Description: "this is base name"
+    Type: "String"
+    Default: "raisetech2"
+
+Resources:
+  #--------------------------------------------#
+  # Application Load Balancer
+  #--------------------------------------------#
+  LoadBalancer:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      Name: "rasetech2-ALB"
+      Subnets:
+        - !ImportValue "raisetech2-PublicSubnet1-ID"
+        - !ImportValue "raisetech2-PublicSubnet2-ID"
+      SecurityGroups:
+        - !ImportValue "raisetech2-ALB-SecurityGroup-ID"
+      Scheme: "internet-facing"
+      LoadBalancerAttributes:
+        - Key: "idle_timeout.timeout_seconds"
+          Value: "60"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-ALB"
+
+  #--------------------------------------------#
+  # Target Group
+  #--------------------------------------------#
+  TargetGroup:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      Name: "MyTargetGroup"
+      VpcId: !ImportValue "raisetech2-VPC-ID"
+      Protocol: "HTTP"
+      Port: "80"
+      TargetType: "instance"
+      HealthCheckProtocol: "HTTP"
+      HealthCheckPort: "80"
+      HealthCheckPath: "/"
+      HealthCheckIntervalSeconds: "30"
+      HealthCheckTimeoutSeconds: "5"
+      HealthyThresholdCount: "5"
+      UnhealthyThresholdCount: "2"
+      Matcher:
+        HttpCode: "200"
+      Targets:
+        - Id: !ImportValue "raisetech2-EC2Instance-ID"
+
+  #--------------------------------------------#
+  # Listener
+  #--------------------------------------------#
+  HTTPListener:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:
+      DefaultActions:
+        - Type: "forward"
+          TargetGroupArn: !Ref "TargetGroup"
+      LoadBalancerArn: !Ref "LoadBalancer"
+      Port: "80"
+      Protocol: "HTTP"
+
+Outputs:
+  LoadBalancerDNSName:
+    Description: "DNS Name of the load balancer"
+    Value: !GetAtt "LoadBalancer.DNSName"

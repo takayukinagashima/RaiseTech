@@ -1,0 +1,174 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "create network and related resources"
+
+Parameters:
+  NameBase:
+    Description: "this is base name"
+    Type: "String"
+    Default: "raisetech2"
+
+Resources:
+  #--------------------------------------------#
+  # VPC
+  #--------------------------------------------#
+  lecture10VPC:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      CidrBlock: "10.0.0.0/24"
+      EnableDnsSupport: "true"
+      EnableDnsHostnames: "true"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-vpc"
+
+  #--------------------------------------------#
+  # InternetGateway
+  #--------------------------------------------#
+  InternetGateway:
+    Type: "AWS::EC2::InternetGateway"
+    Properties:
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-igw"
+
+  AttachGateway:
+    Type: "AWS::EC2::VPCGatewayAttachment"
+    Properties:
+      InternetGatewayId: !Ref "InternetGateway"
+      VpcId: !Ref "lecture10VPC"
+
+  #--------------------------------------------#
+  # Subnet
+  #--------------------------------------------#
+  PublicSubnet1:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref "lecture10VPC"
+      CidrBlock: "10.0.0.0/26"
+      AvailabilityZone: "ap-northeast-1a"
+      MapPublicIpOnLaunch: "true"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-Public1"
+
+  PublicSubnet2:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref "lecture10VPC"
+      CidrBlock: "10.0.0.64/26"
+      AvailabilityZone: "ap-northeast-1c"
+      MapPublicIpOnLaunch: "true"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-Public2"
+
+  PrivateSubnet1:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref "lecture10VPC"
+      CidrBlock: "10.0.0.128/26"
+      AvailabilityZone: "ap-northeast-1a"
+      MapPublicIpOnLaunch: "false"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-Private1"
+
+  PrivateSubnet2:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref "lecture10VPC"
+      CidrBlock: "10.0.0.192/26"
+      AvailabilityZone: "ap-northeast-1c"
+      MapPublicIpOnLaunch: "false"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-Private2"
+
+  #--------------------------------------------#
+  # RouteTable 
+  #--------------------------------------------#
+  lecture10PublicRouteTable:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: !Ref "lecture10VPC"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-rtb-public"
+
+  routePublic:
+    Type: "AWS::EC2::Route"
+    Properties:
+      RouteTableId: !Ref "lecture10PublicRouteTable"
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref "InternetGateway"
+  
+  RouteTableAssociationPublic1:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      SubnetId: !Ref "PublicSubnet1"
+      RouteTableId: !Ref "lecture10PublicRouteTable"
+
+  RouteTableAssociationPublic2:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      SubnetId: !Ref "PublicSubnet2"
+      RouteTableId: !Ref "lecture10PublicRouteTable"
+
+  lecture10PrivateRouteTable1:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: !Ref "lecture10VPC"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-rtb-private1"
+
+  RouteTableAssociationPrivate1:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      SubnetId: !Ref "PrivateSubnet1"
+      RouteTableId: !Ref "lecture10PrivateRouteTable1"
+
+  lecture10PrivateRouteTable2:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: !Ref "lecture10VPC"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-rtb-private2"
+
+  RouteTableAssociationPrivate2:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      SubnetId: !Ref "PrivateSubnet2"
+      RouteTableId: !Ref "lecture10PrivateRouteTable2"
+
+Outputs:
+  VPCId:
+    Description: "The VPC ID"
+    Value: !Ref "lecture10VPC"
+    Export:
+      Name: !Sub "${NameBase}-VPC-ID"
+
+  PublicSubnet1Id:
+    Description: "The Public Subnet 1 ID"
+    Value: !Ref "PublicSubnet1"
+    Export:
+      Name: !Sub "${NameBase}-PublicSubnet1-ID"
+
+  PublicSubnet2Id:
+    Description: "The Public Subnet 2 ID"
+    Value: !Ref "PublicSubnet2"
+    Export:
+      Name: !Sub "${NameBase}-PublicSubnet2-ID"
+
+  PrivateSubnet1Id:
+    Description: "The Private Subnet 1 ID"
+    Value: !Ref "PrivateSubnet1"
+    Export:
+      Name: !Sub "${NameBase}-PrivateSubnet1-ID"
+
+  PrivateSubnet2Id:
+    Description: "The Private Subnet 2 ID"
+    Value: !Ref "PrivateSubnet2"
+    Export:
+      Name: !Sub "${NameBase}-PrivateSubnet2-ID"

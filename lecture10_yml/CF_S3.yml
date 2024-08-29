@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create S3 Bucket and related resources"
+
+Parameters:
+  NameBase:
+    Description: "this is base name"
+    Type: "String"
+    Default: "raisetech2"
+
+Resources:
+  #--------------------------------------------#
+  # S3Bucket
+  #--------------------------------------------#
+  S3Bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Sub "${NameBase}-tk-s3"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: "true"
+        BlockPublicPolicy: "true"
+        IgnorePublicAcls: "true"
+        RestrictPublicBuckets: "true"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: "AES256"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-bucket"
+
+Outputs:
+  S3Bucket:
+    Value: !Ref "S3Bucket"
+    Export:
+      Name: !Sub "${NameBase}-tk-s3-ID"
