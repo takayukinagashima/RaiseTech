@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create EC2 and related resources"
+
+Parameters:
+  NameBase:
+    Description: "this is base name"
+    Type: "String"
+    Default: "raisetech2"
+
+  ImageId: 
+    Description: "The Amazon Machine Image (AMI) ID"
+    Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
+    Default: "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+
+  PublicSubnet1Id:
+    Type: "String"
+    Description: "The Public Subnet 1 ID"
+
+Resources:
+  #--------------------------------------------#
+  # EC2 Instance
+  #--------------------------------------------#
+  EC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      AvailabilityZone: "ap-northeast-1a"
+      ImageId: !Ref "ImageId"
+      InstanceType: "t2.micro"
+      KeyName: "EC2-2-KeyPair"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          SubnetId: !Ref "PublicSubnet1Id"
+          GroupSet:
+            - !ImportValue "raisetech2-EC2-SecurityGroup-ID"
+      IamInstanceProfile: !Ref "EC2InstanceProfile"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-ec2"
+
+  #--------------------------------------------#
+  # IAM Role Attach
+  #--------------------------------------------#
+  S3BucketAccessRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - Effect: "Allow"
+            Principal:
+              Service:   
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      ManagedPolicyArns:                 
+        - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+
+  #--------------------------------------------#
+  # IAM Instance Profile
+  #--------------------------------------------#
+  EC2InstanceProfile:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Path: "/"
+      Roles:
+        - !Ref "S3BucketAccessRole"
+
+Outputs:
+  EC2InstanceId:
+    Description: "The EC2 Instance ID"
+    Value: !Ref "EC2Instance"
+    Export:
+      Name: !Sub "${NameBase}-EC2Instance-ID"

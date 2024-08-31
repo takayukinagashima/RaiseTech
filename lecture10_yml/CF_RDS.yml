@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create RDS and related resources"
+
+Parameters:
+  NameBase:
+    Description: "this is base name"
+    Type: "String"
+    Default: "raisetech2"
+
+  RDSAZ:
+    Type: "AWS::EC2::AvailabilityZone::Name"
+    Default: "ap-northeast-1a"
+
+Resources:
+  #--------------------------------------------#
+  # Private Subnet Group
+  #--------------------------------------------#
+  RDSSubnetGroup:
+    Type: "AWS::RDS::DBSubnetGroup"
+    Properties:
+      DBSubnetGroupDescription: "dedicated to raisetech2-rds"
+      DBSubnetGroupName: !Sub "${NameBase}-dbsubnet"
+      SubnetIds: 
+      - !ImportValue "raisetech2-PrivateSubnet1-ID"
+      - !ImportValue "raisetech2-PrivateSubnet2-ID"
+      Tags: 
+      - 
+        Key: "Name"
+        Value: !Sub "${NameBase}-PrivateSubnet-Group"
+  
+  #--------------------------------------------#
+  # RDS Secret
+  #--------------------------------------------#
+  RDSSecret:
+    Type: "AWS::SecretsManager::Secret"
+    Properties:
+      Name: "MyRDSSecret"
+      Description: "RDS password for my RDS instance"
+      GenerateSecretString:
+        SecretStringTemplate: "{\"username\": \"admin2\"}"
+        GenerateStringKey: "password"
+        PasswordLength: "16"
+        ExcludeCharacters: "\"@/\\"
+
+  #--------------------------------------------#
+  # RDS
+  #--------------------------------------------#
+  RDSInstance:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      DBInstanceIdentifier: "raisetech2-rds"
+      DBInstanceClass: "db.t3.micro"
+      Engine: "mysql"
+      EngineVersion: "8.0.35"
+      MasterUsername: "{{resolve:secretsmanager:MyRDSSecret:SecretString:username}}"
+      MasterUserPassword: "{{resolve:secretsmanager:MyRDSSecret:SecretString:password}}"
+      DBName: "raisetech2rds"
+      BackupRetentionPeriod: "1"
+      PubliclyAccessible: "false"
+      StorageType: "gp2"
+      AllocatedStorage: "20"
+      StorageEncrypted: "true"
+      AvailabilityZone: !Ref "RDSAZ"
+      MultiAZ: "false"
+      CopyTagsToSnapshot: "false"
+      DeleteAutomatedBackups: "true"
+      DBSubnetGroupName: !Ref "RDSSubnetGroup"
+      VPCSecurityGroups: 
+       - !ImportValue "raisetech2-RDS-SecurityGroup-ID"
+      Tags: 
+      - 
+        Key: "Name"
+        Value: !Sub "${NameBase}-rds"

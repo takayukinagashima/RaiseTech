@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create Security Groups"
+
+Parameters:
+  NameBase:
+    Description: "this is base name"
+    Type: "String"
+    Default: "raisetech2"
+
+  MyCidrIp:
+    NoEcho: "true"
+    Type: "String"
+    Description: "Enter the CIDR IP for the security group ingress rule"
+
+Resources:
+  # EC2 Security Group
+  EC2SecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Enable SSH and HTTP access"
+      VpcId: !ImportValue "raisetech2-VPC-ID"
+      SecurityGroupIngress:
+        - IpProtocol: "tcp"
+          FromPort: "22"
+          ToPort: "22"
+          CidrIp: !Ref "MyCidrIp"
+        - IpProtocol: "tcp"
+          FromPort: "80"
+          ToPort: "80"
+          SourceSecurityGroupId: !Ref "ALBSecurityGroup"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-EC2-SecurityGroup"
+
+  # RDS Security Group
+  RDSSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      VpcId: !ImportValue "raisetech2-VPC-ID"
+      GroupDescription: "for RDS"
+      SecurityGroupIngress:
+        - IpProtocol: "tcp"
+          FromPort: "3306"
+          ToPort: "3306"
+          SourceSecurityGroupId: !Ref "EC2SecurityGroup"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-RDS-SecurityGroup"
+
+  # ALB Security Group
+  ALBSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Security group for ALB"
+      VpcId: !ImportValue "raisetech2-VPC-ID"
+      SecurityGroupIngress:
+        - IpProtocol: "tcp"
+          FromPort: "80"
+          ToPort: "80"
+          CidrIp: "0.0.0.0/0"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${NameBase}-ALB-SecurityGroup"
+
+Outputs:
+  EC2SecurityGroupId:
+    Description: "Security Group ID for EC2"
+    Value: !Ref "EC2SecurityGroup"
+    Export:
+      Name: !Sub "${NameBase}-EC2-SecurityGroup-ID"
+
+  RDSSecurityGroupId:
+    Description: "Security Group ID for RDS"
+    Value: !Ref "RDSSecurityGroup"
+    Export:
+      Name: !Sub "${NameBase}-RDS-SecurityGroup-ID"
+
+  ALBSecurityGroupId:
+    Description: "Security Group ID for ALB"
+    Value: !Ref "ALBSecurityGroup"
+    Export:
+      Name: !Sub "${NameBase}-ALB-SecurityGroup-ID"
