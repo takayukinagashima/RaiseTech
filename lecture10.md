@@ -3,15 +3,16 @@
 ## 構成
 * 第五回課題で作成した構成図の環境になるよう構築を進めた。
 * 下の図のスタック単位でYMLファイルを作成した。
+* [作成したテンプレートはこちらから確認](lecture10_yaml/)
 
 | スタック名 | テンプレートのリンク先 | リソース | 備考など |
 |:----------------:|:----------------:|:----------------:|:----------------:|
-|RAISETECH-VPC-2|[CF_NETWORK.yml](lecture10_yml/CF_NETWORK.yml)|VPC<br>IGW<br>PublicSubnet<br>PrivateSubnet<br>RouteTable</br>|VPCのID<br>Public2つとPrivate2つのID<br>PubricSubnet内のリソースをインターネット接続可にする|
-|RAISETECH-SG-2|[CF_SG.yml](lecture10_yml/CF_SG.yml)|ALBSecurityGroup<br>EC2SecurityGroup<br>RDSSecurityGroup| 各リソース用のSecurityGroup|
-|RAISETECH-EC2-2|[CF_EC2.yml](lecture10_yml/CF_EC2.yml)|EC2Instance<br>EC2InstanceProfile<br>S3BucketAccessRole|EC2インスタンスのID<br>キーペアは事前にマネジメントコンソールで作成したものを使用|
-|RAISETECH-RDS-2|[CF_RDS.yml](lecture10_yml/CF_RDS.yml)|RDSInstance<br>RDSSecret<br>RDSSubnetGroup|MYSQLでDB作成|
-|RAISETECH-ELB-2|[CF_ELB.yml](lecture10_yml/CF_ELB.yml)|LoadBalancer<br>HTTPListener<br>TargetGroup|EC2インスタンスとの紐付け|
-|RAISETECH-S3-2|[CF_S3.yml](lecture10_yml/CF_S3.yml)|S3Bucket|フルアクセスを許可|
+|RAISETECH-VPC-2|[CF_NETWORK.yml](lecture10_yaml/CF_NETWORK.yml)|VPC<br>IGW<br>PublicSubnet<br>PrivateSubnet<br>RouteTable</br>|VPCのID<br>Public2つとPrivate2つのID<br>PubricSubnet内のリソースをインターネット接続可にする|
+|RAISETECH-SG-2|[CF_SG.yml](lecture10_yaml/CF_SG.yml)|ALBSecurityGroup<br>EC2SecurityGroup<br>RDSSecurityGroup| 各リソース用のSecurityGroup|
+|RAISETECH-EC2-2|[CF_EC2.yml](lecture10_yaml/CF_EC2.yml)|EC2Instance<br>EC2InstanceProfile<br>S3BucketAccessRole|EC2インスタンスのID<br>キーペアは事前にマネジメントコンソールで作成したものを使用|
+|RAISETECH-RDS-2|[CF_RDS.yml](lecture10_yaml/CF_RDS.yml)|RDSInstance<br>RDSSecret<br>RDSSubnetGroup|MYSQLでDB作成|
+|RAISETECH-ELB-2|[CF_ELB.yml](lecture10_yaml/CF_ELB.yml)|LoadBalancer<br>HTTPListener<br>TargetGroup|EC2インスタンスとの紐付け|
+|RAISETECH-S3-2|[CF_S3.yml](lecture10_yaml/CF_S3.yml)|S3Bucket|フルアクセスを許可|
 
 ## 作成したスタックの一覧
 
@@ -65,7 +66,7 @@
 ![ALB_TargetGroup](task-image/lecture10/ALB_TargetGroup.png)
 
 * ヘルスチェック
-![ALB_HelthCheck](task-image/lecture10/ALB_HelthCheck.png)
+![ALB_HealthCheck](task-image/lecture10/ALB_HealthCheck.png)
 
 ## 構築したS3の環境確認
 

@@ -26,10 +26,13 @@ Resources:
       AvailabilityZone: "ap-northeast-1a"
       ImageId: !Ref "ImageId"
       InstanceType: "t2.micro"
-      SubnetId: !Ref "PublicSubnet1Id"
-      KeyName: "EC2-2-KeyPair" 
-      SecurityGroupIds:
-        - !ImportValue "raisetech2-EC2-SecurityGroup-ID"
+      KeyName: "EC2-2-KeyPair"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          SubnetId: !Ref "PublicSubnet1Id"
+          GroupSet:
+            - !ImportValue "raisetech2-EC2-SecurityGroup-ID"
       IamInstanceProfile: !Ref "EC2InstanceProfile"
       Tags:
         - Key: "Name"
